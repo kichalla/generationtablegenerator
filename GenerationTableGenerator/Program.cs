@@ -36,16 +36,21 @@ namespace GenerationTableGenerator
             File.AppendAllText(targetFile, markdown);
         }
 
-        private static string GenerateTableInMarkdown(List<List<string>> generationTableRaw)
+        private static string GenerateTableInMarkdown(List<List<string>> generationTable)
         {
             var outputBuilder = new StringBuilder();
 
-            var headerRow = generationTableRaw[0];
-            AddRow(outputBuilder, headerRow);
-            AddRow(outputBuilder, headerRow.Select(headerName => new string('-', headerName.Length)));
-            for (var i = 1; i < generationTableRaw.Count; i++)
+            for (var i = 0; i < generationTable.Count; i++)
             {
-                AddRow(outputBuilder, generationTableRaw[i]);
+                if (i == 0)
+                {
+                    var headerRow = generationTable[i];
+                    AddRow(outputBuilder, headerRow);
+                    AddRow(outputBuilder, headerRow.Select(headerName => new string('-', headerName.Length)));
+                    continue;
+                }
+
+                AddRow(outputBuilder, generationTable[i]);
             }
 
             return outputBuilder.ToString();
@@ -62,25 +67,24 @@ namespace GenerationTableGenerator
             var contractInfo = new ContractInfo(contractDir);
 
             var formattedGenerations = new string[contractInfo.Generations.Count];
-
-            int count = 0;
             KeyValuePair<string, bool>? previousGeneration = null;
-            foreach (var generation in contractInfo.Generations)
+            for (var i = 0; i < contractInfo.Generations.Count; i++)
             {
+                var generation = contractInfo.Generations[i];
+
                 if (generation.Value)
                 {
-                    formattedGenerations[count] = "X";
+                    formattedGenerations[i] = "X";
                     previousGeneration = generation;
                 }
                 else
                 {
                     // for superscript
-                    //formattedGenerations[count] =
+                    //formattedGenerations[i] =
                     //    (previousGeneration != null) ? $"X<sup>{previousGeneration.Value.Key}</sup>" : string.Empty;
 
-                    formattedGenerations[count] = (previousGeneration != null) ? $"<-" : string.Empty;
+                    formattedGenerations[i] = (previousGeneration != null) ? "<-" : string.Empty;
                 }
-                count++;
             }
 
             var rowColumns = new List<string>();
