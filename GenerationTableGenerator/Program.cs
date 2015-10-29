@@ -83,7 +83,7 @@ namespace GenerationTableGenerator
                     //formattedGenerations[i] =
                     //    (previousGeneration != null) ? $"X<sup>{previousGeneration.Value.Key}</sup>" : string.Empty;
 
-                    formattedGenerations[i] = (previousGeneration != null) ? "<-" : string.Empty;
+                    formattedGenerations[i] = (previousGeneration != null) ? "⇠" : string.Empty;
                 }
             }
 
