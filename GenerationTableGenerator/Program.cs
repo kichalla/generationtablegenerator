@@ -28,7 +28,11 @@ namespace GenerationTableGenerator
             generationTableRows.Add(new string[] { "Contract", "5.1", "5.2", "5.3", "5.4", "5.5" }.ToList());
             foreach (var contractDir in packageDirs)
             {
-                generationTableRows.Add(GetContractRow(contractDir));
+                var row = GetContractRow(contractDir);
+                if (row != null)
+                {
+                    generationTableRows.Add(row);
+                }
             }
 
             var markdown = GenerateTableInMarkdown(generationTableRows);
@@ -87,10 +91,15 @@ namespace GenerationTableGenerator
                 }
             }
 
-            var rowColumns = new List<string>();
-            rowColumns.Add(contractInfo.Name);
-            rowColumns.AddRange(formattedGenerations);
-            return rowColumns;
+            if (!formattedGenerations.All(version => string.IsNullOrEmpty(version)))
+            {
+                var rowColumns = new List<string>();
+                rowColumns.Add(contractInfo.Name);
+                rowColumns.AddRange(formattedGenerations);
+                return rowColumns;
+            }
+
+            return null;
         }
 
         private class ContractInfo
